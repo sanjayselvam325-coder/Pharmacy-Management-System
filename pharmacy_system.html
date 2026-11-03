@@ -1,0 +1,1109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Sanjay — Pharmacy Management System</title>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+:root{--bg:#0f1117;--bg2:#181c27;--bg3:#1e2335;--sw:238px;--tx:#e8eaf2;--tm:#7880a0;--td:#3d4468;--blue:#4f8ef7;--green:#34d399;--amber:#f59e0b;--purple:#a78bfa;--red:#f87171;--cyan:#22d3ee;--bbg:rgba(79,142,247,.13);--gbg:rgba(52,211,153,.13);--abg:rgba(245,158,11,.13);--pbg:rgba(167,139,250,.13);--rbg:rgba(248,113,113,.13);--cbg:rgba(34,211,238,.13);--br:rgba(255,255,255,.07);--br2:rgba(255,255,255,.12);--sh:0 8px 32px rgba(0,0,0,.4);--r:12px;--rs:8px;--tr:.17s ease;--fu:'Sora',sans-serif;--fm:'JetBrains Mono',monospace;}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}html{font-size:14px;}
+body{font-family:var(--fu);background:var(--bg);color:var(--tx);display:flex;min-height:100vh;overflow-x:hidden;}
+button{cursor:pointer;border:none;background:none;font-family:inherit;}
+input,textarea,select{font-family:var(--fu);font-size:13px;color:var(--tx);background:var(--bg3);border:1px solid var(--br2);border-radius:var(--rs);padding:9px 12px;width:100%;outline:none;transition:border-color var(--tr);}
+input:focus,textarea:focus,select:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(79,142,247,.15);}
+input::placeholder,textarea::placeholder{color:var(--td);}select option{background:var(--bg3);}
+
+/* LOGIN SCREEN — Split Panel Design */
+#loginScreen{position:fixed;inset:0;background:#080c14;z-index:1000;display:flex;align-items:center;justify-content:center;}
+.ls-wrap{display:flex;width:860px;max-width:96vw;height:540px;border-radius:20px;overflow:hidden;box-shadow:0 32px 80px rgba(0,0,0,.6);}
+
+/* LEFT PANEL */
+.ls-left{width:52%;background:#08122b;position:relative;overflow:hidden;display:flex;flex-direction:column;justify-content:flex-end;padding:40px 36px;}
+.ls-geo{position:absolute;inset:0;pointer-events:none;}
+.ls-ring{position:absolute;border-radius:50%;border:1px solid rgba(79,142,247,.12);}
+.ls-cross-v{position:absolute;background:rgba(79,142,247,.1);border-radius:3px;}
+.ls-cross-h{position:absolute;background:rgba(79,142,247,.1);border-radius:3px;}
+.ls-pill{position:absolute;border-radius:24px;border:1px solid rgba(79,142,247,.22);background:rgba(79,142,247,.07);}
+.ls-dot{position:absolute;border-radius:50%;background:rgba(79,142,247,.35);}
+.ls-fade{position:absolute;inset:0;background:linear-gradient(to bottom,transparent 30%,#08122b 100%);}
+.ls-tag{background:rgba(79,142,247,.14);border:1px solid rgba(79,142,247,.28);border-radius:20px;padding:4px 13px;font-size:9px;color:#4f8ef7;font-weight:600;letter-spacing:1px;text-transform:uppercase;width:fit-content;margin-bottom:16px;}
+.ls-head{font-size:30px;font-weight:700;color:#e8eaf2;line-height:1.15;letter-spacing:-.5px;margin-bottom:10px;}
+.ls-head span{color:#4f8ef7;}
+.ls-desc{font-size:12px;color:#6874a0;line-height:1.7;max-width:260px;}
+.ls-chips{display:flex;gap:10px;margin-top:22px;}
+.ls-chip{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:10px;padding:10px 14px;flex:1;text-align:center;}
+.ls-chip-v{font-size:17px;font-weight:700;font-family:var(--fm);color:#4f8ef7;line-height:1;}
+.ls-chip-l{font-size:9px;color:#6874a0;margin-top:3px;text-transform:uppercase;letter-spacing:.5px;}
+
+/* RIGHT PANEL */
+.ls-right{width:48%;background:#0f1117;display:flex;align-items:center;justify-content:center;padding:40px 36px;border-left:1px solid rgba(255,255,255,.06);}
+.ls-form{width:100%;}
+.ls-welcome{font-size:22px;font-weight:700;color:#e8eaf2;letter-spacing:-.4px;margin-bottom:4px;}
+.ls-wsub{font-size:12px;color:#7880a0;margin-bottom:30px;}
+.lf-group{display:flex;flex-direction:column;gap:5px;margin-bottom:15px;}
+.lf-label{font-size:10px;font-weight:600;color:#7880a0;text-transform:uppercase;letter-spacing:.6px;}
+.lf-wrap{position:relative;}
+.lf-icon{position:absolute;left:12px;top:50%;transform:translateY(-50%);font-size:14px;pointer-events:none;opacity:.5;}
+.lf-input{width:100%;background:#161b2e;border:1px solid rgba(255,255,255,.09);border-radius:9px;padding:11px 13px 11px 36px;font-size:13px;color:#e8eaf2;font-family:var(--fu);outline:none;transition:border-color .15s,box-shadow .15s;}
+.lf-input:focus{border-color:#4f8ef7;box-shadow:0 0 0 3px rgba(79,142,247,.13);}
+.lf-input::placeholder{color:#3a4060;}
+.ls-err{font-size:11px;color:#f87171;min-height:15px;margin-bottom:8px;}
+.ls-btn{width:100%;padding:12px;background:#4f8ef7;color:#fff;border:none;border-radius:9px;font-size:14px;font-weight:600;cursor:pointer;font-family:var(--fu);letter-spacing:.2px;transition:background .15s,transform .1s;display:flex;align-items:center;justify-content:center;gap:8px;}
+.ls-btn:hover{background:#3a7de4;}.ls-btn:active{transform:scale(.98);}
+.ls-hint{text-align:center;font-size:11px;color:#3a4060;margin-top:14px;}
+.ls-hint b{color:#4f8ef7;font-weight:500;}
+.ls-divider{display:flex;align-items:center;gap:10px;margin:16px 0;}
+.ls-divider::before,.ls-divider::after{content:'';flex:1;height:1px;background:rgba(255,255,255,.07);}
+.ls-divider span{font-size:10px;color:#3a4060;text-transform:uppercase;letter-spacing:.5px;}
+.login-err{display:none;}
+
+/* SIDEBAR */
+.sidebar{width:var(--sw);min-height:100vh;background:var(--bg2);border-right:1px solid var(--br);display:flex;flex-direction:column;position:fixed;top:0;left:0;bottom:0;z-index:100;}
+.sb-brand{display:flex;align-items:center;gap:11px;padding:20px 16px 16px;border-bottom:1px solid var(--br);}
+.brand-ic{font-size:22px;width:38px;height:38px;background:linear-gradient(135deg,var(--blue),var(--purple));border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.brand-nm{font-size:14px;font-weight:700;letter-spacing:-.3px;}.brand-sub{font-size:10px;color:var(--tm);}
+.sb-nav{padding:12px 8px;flex:1;display:flex;flex-direction:column;gap:1px;overflow-y:auto;}
+.nav-section{font-size:9px;font-weight:600;color:var(--td);text-transform:uppercase;letter-spacing:1px;padding:10px 10px 4px;}
+.nav-item{display:flex;align-items:center;gap:9px;padding:8px 11px;border-radius:var(--rs);color:var(--tm);font-size:13px;font-weight:500;transition:all var(--tr);cursor:pointer;user-select:none;}
+.nav-item:hover{color:var(--tx);background:var(--bg3);}.nav-item.active{color:var(--blue);background:var(--bbg);}
+.nav-ic{font-size:14px;width:18px;text-align:center;}
+.nav-badge{margin-left:auto;background:var(--rbg);color:var(--red);font-size:10px;font-weight:700;padding:1px 6px;border-radius:10px;font-family:var(--fm);}
+.sb-user{padding:12px 16px;border-top:1px solid var(--br);}
+.sb-user-row{display:flex;align-items:center;gap:10px;}
+.sb-avatar{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--blue),var(--purple));display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff;flex-shrink:0;}
+.sb-uname{font-size:12px;font-weight:600;}.sb-urole{font-size:10px;color:var(--tm);}
+.sb-logout{margin-left:auto;font-size:11px;color:var(--tm);padding:4px 8px;border-radius:6px;border:1px solid var(--br2);transition:all var(--tr);}
+.sb-logout:hover{color:var(--red);border-color:var(--red);}
+
+/* MAIN */
+.main{margin-left:var(--sw);flex:1;display:flex;flex-direction:column;min-height:100vh;}
+.topbar{height:58px;background:var(--bg2);border-bottom:1px solid var(--br);display:flex;align-items:center;justify-content:space-between;padding:0 24px;position:sticky;top:0;z-index:50;}
+.tb-l{display:flex;flex-direction:column;gap:2px;}.pg-title{font-size:15px;font-weight:700;letter-spacing:-.3px;}.crumb{font-size:11px;color:var(--tm);}
+.tb-r{display:flex;align-items:center;gap:12px;}.tb-time{font-family:var(--fm);font-size:12px;color:var(--tm);}
+.page{display:none;padding:22px 24px;flex:1;animation:fadeIn .2s ease;}.page.active{display:block;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(4px);}to{opacity:1;transform:none;}}
+
+/* STAT CARDS */
+.stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:18px;}
+.stat-card{background:var(--bg2);border:1px solid var(--br);border-radius:var(--r);padding:18px 16px;position:relative;overflow:hidden;transition:transform var(--tr);}
+.stat-card:hover{transform:translateY(-2px);}
+.stat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;}
+.sc-blue{background:linear-gradient(135deg,var(--bg2) 60%,var(--bbg));--cc:var(--blue);}.sc-blue::before{background:var(--blue);}
+.sc-green{background:linear-gradient(135deg,var(--bg2) 60%,var(--gbg));--cc:var(--green);}.sc-green::before{background:var(--green);}
+.sc-amber{background:linear-gradient(135deg,var(--bg2) 60%,var(--abg));--cc:var(--amber);}.sc-amber::before{background:var(--amber);}
+.sc-purple{background:linear-gradient(135deg,var(--bg2) 60%,var(--pbg));--cc:var(--purple);}.sc-purple::before{background:var(--purple);}
+.sc-red{background:linear-gradient(135deg,var(--bg2) 60%,var(--rbg));--cc:var(--red);}.sc-red::before{background:var(--red);}
+.sc-cyan{background:linear-gradient(135deg,var(--bg2) 60%,var(--cbg));--cc:var(--cyan);}.sc-cyan::before{background:var(--cyan);}
+.stat-lbl{font-size:10px;color:var(--tm);text-transform:uppercase;letter-spacing:.8px;margin-bottom:6px;}
+.stat-val{font-size:26px;font-weight:700;font-family:var(--fm);color:var(--cc);line-height:1;}
+.stat-ico{position:absolute;right:14px;bottom:10px;font-size:26px;opacity:.15;}
+
+/* PANELS */
+.panels{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.panel{background:var(--bg2);border:1px solid var(--br);border-radius:var(--r);overflow:hidden;}
+.ph{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-bottom:1px solid var(--br);}
+.pt{font-size:13px;font-weight:600;}.pl{font-size:11px;color:var(--blue);cursor:pointer;}.pl:hover{opacity:.7;}
+.pb{padding:4px 0;max-height:240px;overflow-y:auto;}
+.pr{display:flex;align-items:center;justify-content:space-between;padding:8px 16px;border-bottom:1px solid var(--br);font-size:12px;transition:background var(--tr);}
+.pr:last-child{border-bottom:none;}.pr:hover{background:var(--bg3);}
+.pr-nm{font-weight:500;}.pr-mt{color:var(--tm);font-size:11px;}
+.badge{padding:2px 7px;border-radius:20px;font-size:10px;font-weight:600;font-family:var(--fm);}
+.bg{background:var(--gbg);color:var(--green);}.bb{background:var(--bbg);color:var(--blue);}.br-b{background:var(--rbg);color:var(--red);}.ba{background:var(--abg);color:var(--amber);}
+
+/* TOOLBAR */
+.toolbar{display:flex;align-items:center;gap:10px;margin-bottom:16px;}
+.sw-w{position:relative;flex:1;max-width:340px;}.sw-w span{position:absolute;left:10px;top:50%;transform:translateY(-50%);font-size:13px;pointer-events:none;}
+.si{padding-left:30px;background:var(--bg2);}
+
+/* TABS */
+.tabs{display:flex;gap:2px;background:var(--bg3);padding:4px;border-radius:var(--rs);margin-bottom:16px;width:fit-content;}
+.tab{padding:6px 14px;border-radius:6px;font-size:12px;font-weight:500;color:var(--tm);cursor:pointer;transition:all var(--tr);}
+.tab.active{background:var(--bg2);color:var(--tx);}
+
+/* BUTTONS */
+.btn{display:inline-flex;align-items:center;gap:5px;padding:7px 14px;border-radius:var(--rs);font-size:13px;font-weight:600;transition:all var(--tr);white-space:nowrap;}
+.btn-p{background:var(--blue);color:#fff;}.btn-p:hover{background:#3a7de4;transform:translateY(-1px);}
+.btn-g{background:transparent;color:var(--tm);border:1px solid var(--br2);}.btn-g:hover{color:var(--tx);}
+.btn-gr{background:var(--gbg);color:var(--green);border:1px solid rgba(52,211,153,.25);}.btn-gr:hover{background:rgba(52,211,153,.25);}
+.btn-sm{padding:4px 9px;font-size:11px;border-radius:6px;}
+.btn-e{background:var(--bbg);color:var(--blue);}.btn-e:hover{background:rgba(79,142,247,.25);}
+.btn-d{background:var(--rbg);color:var(--red);}.btn-d:hover{background:rgba(248,113,113,.25);}
+
+/* TABLE */
+.tc{background:var(--bg2);border:1px solid var(--br);border-radius:var(--r);overflow:hidden;overflow-x:auto;}
+.dt{width:100%;border-collapse:collapse;font-size:13px;}.dt thead{background:var(--bg3);}
+.dt th{padding:10px 13px;text-align:left;font-size:10px;font-weight:600;color:var(--tm);text-transform:uppercase;letter-spacing:.6px;border-bottom:1px solid var(--br);}
+.dt td{padding:10px 13px;border-bottom:1px solid var(--br);color:var(--tx);}
+.dt tr:last-child td{border-bottom:none;}.dt tbody tr:hover{background:rgba(255,255,255,.02);}
+.mono{font-family:var(--fm);}
+.empty{text-align:center;color:var(--td);padding:32px;font-size:13px;}
+.sk{display:inline-block;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:600;font-family:var(--fm);}
+.sk-ok{background:var(--gbg);color:var(--green);}.sk-lo{background:var(--abg);color:var(--amber);}.sk-out{background:var(--rbg);color:var(--red);}
+.role-admin{background:var(--pbg);color:var(--purple);padding:2px 8px;border-radius:20px;font-size:10px;font-weight:600;}
+.role-staff{background:var(--bbg);color:var(--blue);padding:2px 8px;border-radius:20px;font-size:10px;font-weight:600;}
+
+/* BILL CART */
+.cart-box{background:var(--bg3);border:1px solid var(--br2);border-radius:var(--r);padding:14px;margin-bottom:14px;}
+.cart-header{font-size:12px;font-weight:600;color:var(--tm);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px;}
+.cart-row{display:flex;align-items:center;gap:8px;margin-bottom:8px;font-size:13px;}
+.cart-items-list{max-height:160px;overflow-y:auto;margin-bottom:10px;}
+.cart-item{display:flex;align-items:center;justify-content:space-between;padding:7px 10px;background:var(--bg2);border-radius:var(--rs);margin-bottom:5px;font-size:12px;}
+.cart-item-name{font-weight:500;flex:1;}
+.cart-item-price{font-family:var(--fm);color:var(--green);width:80px;text-align:right;}
+.cart-item-rm{color:var(--red);cursor:pointer;font-size:14px;padding:0 4px;}
+.cart-total{display:flex;justify-content:space-between;align-items:center;padding:10px 0 0;border-top:1px solid var(--br2);}
+.cart-total-lbl{font-size:12px;color:var(--tm);}
+.cart-total-val{font-size:18px;font-weight:700;font-family:var(--fm);color:var(--green);}
+.alert-row{background:rgba(248,113,113,.07);border-left:3px solid var(--red);border-radius:0 var(--rs) var(--rs) 0;padding:10px 14px;margin-bottom:8px;display:flex;align-items:center;justify-content:space-between;}
+.alert-row.warn{background:rgba(245,158,11,.07);border-left-color:var(--amber);}
+
+/* MODAL */
+.mo{display:none;position:fixed;inset:0;background:rgba(0,0,0,.65);backdrop-filter:blur(4px);z-index:200;align-items:center;justify-content:center;}
+.mo.open{display:flex;}
+.md{background:var(--bg2);border:1px solid var(--br2);border-radius:16px;width:100%;max-width:520px;box-shadow:var(--sh);animation:mi .2s ease;margin:16px;max-height:90vh;overflow-y:auto;}
+.md-lg{max-width:680px;}
+@keyframes mi{from{opacity:0;transform:scale(.95) translateY(-10px);}to{opacity:1;transform:none;}}
+.mh{display:flex;align-items:center;justify-content:space-between;padding:16px 20px 13px;font-size:14px;font-weight:700;border-bottom:1px solid var(--br);position:sticky;top:0;background:var(--bg2);z-index:1;}
+.mc{color:var(--tm);font-size:16px;width:26px;height:26px;border-radius:6px;display:flex;align-items:center;justify-content:center;transition:all var(--tr);}.mc:hover{background:var(--bg3);color:var(--tx);}
+.mb{padding:16px 20px;display:flex;flex-direction:column;gap:12px;}
+.mf{display:flex;gap:8px;justify-content:flex-end;padding:13px 20px;border-top:1px solid var(--br);}
+.fr{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.fg{display:flex;flex-direction:column;gap:5px;}.fg label{font-size:10px;font-weight:600;color:var(--tm);text-transform:uppercase;letter-spacing:.5px;}
+
+/* INVOICE PRINT */
+#invoiceView{display:none;position:fixed;inset:0;background:#fff;z-index:500;overflow-y:auto;color:#111;font-family:var(--fu);}
+.inv-wrap{max-width:680px;margin:0 auto;padding:40px 32px;}
+.inv-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:30px;padding-bottom:20px;border-bottom:2px solid #e5e7eb;}
+.inv-brand{font-size:24px;font-weight:700;color:#1e293b;}
+.inv-sub{font-size:12px;color:#64748b;margin-top:2px;}
+.inv-num{text-align:right;font-size:13px;color:#64748b;}
+.inv-num strong{display:block;font-size:18px;color:#1e293b;}
+.inv-parties{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-bottom:24px;}
+.inv-party-lbl{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.6px;color:#94a3b8;margin-bottom:6px;}
+.inv-party-val{font-size:13px;color:#1e293b;line-height:1.6;}
+.inv-table{width:100%;border-collapse:collapse;margin-bottom:20px;}
+.inv-table th{background:#f8fafc;padding:9px 12px;text-align:left;font-size:11px;color:#64748b;font-weight:600;text-transform:uppercase;border-bottom:1px solid #e5e7eb;}
+.inv-table td{padding:9px 12px;border-bottom:1px solid #f1f5f9;font-size:13px;}
+.inv-totals{text-align:right;font-size:13px;}
+.inv-totals div{margin-bottom:5px;}
+.inv-grand{font-size:18px;font-weight:700;color:#1e293b;border-top:2px solid #e5e7eb;padding-top:10px;margin-top:10px;}
+.inv-footer{margin-top:30px;padding-top:16px;border-top:1px solid #e5e7eb;font-size:11px;color:#94a3b8;text-align:center;}
+.inv-print-bar{background:#1e293b;color:#fff;padding:10px 32px;display:flex;gap:10px;position:sticky;top:0;z-index:10;}
+.inv-print-btn{padding:7px 18px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;border:none;}
+@media print{.inv-print-bar{display:none!important;} #invoiceView{position:absolute;}}
+
+/* TOAST */
+.toast{position:fixed;bottom:22px;right:22px;background:var(--bg3);border:1px solid var(--br2);border-radius:var(--rs);padding:10px 16px;font-size:13px;box-shadow:var(--sh);z-index:999;opacity:0;transform:translateY(10px);transition:all .24s ease;pointer-events:none;}
+.toast.show{opacity:1;transform:translateY(0);}.toast.ok{border-left:3px solid var(--green);}.toast.err{border-left:3px solid var(--red);}
+::-webkit-scrollbar{width:5px;height:5px;}::-webkit-scrollbar-track{background:transparent;}::-webkit-scrollbar-thumb{background:var(--br2);border-radius:10px;}
+@media(max-width:1100px){.stat-grid{grid-template-columns:repeat(2,1fr);}.panels{grid-template-columns:1fr;}}
+@media(max-width:700px){:root{--sw:0px;}.sidebar{display:none;}.fr{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+
+<!-- ═══════════════ LOGIN SCREEN ═══════════════ -->
+<div id="loginScreen">
+  <div class="ls-wrap">
+
+    <!-- Left decorative panel -->
+    <div class="ls-left">
+      <div class="ls-geo">
+        <!-- Rings -->
+        <div class="ls-ring" style="width:380px;height:380px;top:-120px;left:-100px;"></div>
+        <div class="ls-ring" style="width:240px;height:240px;top:40px;right:-80px;"></div>
+        <div class="ls-ring" style="width:140px;height:140px;bottom:100px;right:20px;opacity:.5"></div>
+        <div class="ls-ring" style="width:80px;height:80px;top:180px;left:30px;opacity:.4"></div>
+        <!-- Cross symbols (medical) -->
+        <div class="ls-cross-v" style="width:7px;height:36px;top:120px;left:72px;"></div>
+        <div class="ls-cross-h" style="width:36px;height:7px;top:135px;left:57px;"></div>
+        <div class="ls-cross-v" style="width:5px;height:26px;top:52px;right:96px;opacity:.5"></div>
+        <div class="ls-cross-h" style="width:26px;height:5px;top:62px;right:86px;opacity:.5"></div>
+        <div class="ls-cross-v" style="width:4px;height:20px;bottom:160px;left:160px;opacity:.3"></div>
+        <div class="ls-cross-h" style="width:20px;height:4px;bottom:168px;left:152px;opacity:.3"></div>
+        <!-- Pill shapes -->
+        <div class="ls-pill" style="width:88px;height:30px;top:195px;right:18px;transform:rotate(-20deg);"></div>
+        <div class="ls-pill" style="width:58px;height:20px;top:256px;right:104px;transform:rotate(14deg);opacity:.55"></div>
+        <div class="ls-pill" style="width:42px;height:15px;top:94px;left:192px;transform:rotate(-7deg);opacity:.4"></div>
+        <div class="ls-pill" style="width:70px;height:22px;bottom:190px;right:40px;transform:rotate(6deg);opacity:.35"></div>
+        <!-- Dots -->
+        <div class="ls-dot" style="width:4px;height:4px;top:168px;right:60px;"></div>
+        <div class="ls-dot" style="width:3px;height:3px;top:300px;left:80px;opacity:.5"></div>
+        <div class="ls-dot" style="width:5px;height:5px;bottom:220px;left:120px;opacity:.3"></div>
+        <div class="ls-fade"></div>
+      </div>
+      <div class="ls-tag">Pharmacy Management</div>
+      <div class="ls-head">Sanjay<br/><span>System</span></div>
+      <div class="ls-desc">Medicines, billing, stock alerts, suppliers and customers — all 6 modules in one secure system.</div>
+      <div class="ls-chips">
+        <div class="ls-chip"><div class="ls-chip-v">6</div><div class="ls-chip-l">Modules</div></div>
+        <div class="ls-chip"><div class="ls-chip-v">Live</div><div class="ls-chip-l">Database</div></div>
+        <div class="ls-chip"><div class="ls-chip-v">SHA</div><div class="ls-chip-l">Encrypted</div></div>
+      </div>
+    </div>
+
+    <!-- Right form panel -->
+    <div class="ls-right">
+      <div class="ls-form">
+        <div class="ls-welcome">Welcome back</div>
+        <div class="ls-wsub">Sign in to your pharmacy account</div>
+
+        <div class="lf-group">
+          <label class="lf-label">Username</label>
+          <div class="lf-wrap">
+            <span class="lf-icon">👤</span>
+            <input class="lf-input" type="text" id="lUser" placeholder="Enter your username" autocomplete="username"/>
+          </div>
+        </div>
+
+        <div class="lf-group">
+          <label class="lf-label">Password</label>
+          <div class="lf-wrap">
+            <span class="lf-icon">🔒</span>
+            <input class="lf-input" type="password" id="lPass" placeholder="••••••••" autocomplete="current-password"/>
+          </div>
+        </div>
+
+        <div class="ls-err" id="lErr"></div>
+
+        <button class="ls-btn" id="lBtn" onclick="doLogin()">
+          Sign In
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+
+        <div class="ls-divider"><span>default access</span></div>
+        <div class="ls-hint">Username: <b>admin</b> &nbsp;&nbsp; Password: <b>admin123</b></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ═══════════════ SIDEBAR ═══════════════ -->
+<aside class="sidebar">
+  <div class="sb-brand">
+    <div class="brand-ic">⚕</div>
+    <div><div class="brand-nm">Sanjay Pharmacy</div><div class="brand-sub">Management System</div></div>
+  </div>
+  <nav class="sb-nav">
+    <div class="nav-section">Main</div>
+    <a class="nav-item active" data-page="dashboard"><span class="nav-ic">▦</span>Dashboard</a>
+    <div class="nav-section">Inventory</div>
+    <a class="nav-item" data-page="medicines"><span class="nav-ic">💊</span>Medicines</a>
+    <a class="nav-item" data-page="stock"><span class="nav-ic">📦</span>Stock <span class="nav-badge" id="lowBadge" style="display:none">!</span></a>
+    <a class="nav-item" data-page="suppliers"><span class="nav-ic">🏭</span>Suppliers</a>
+    <div class="nav-section">Sales</div>
+    <a class="nav-item" data-page="billing"><span class="nav-ic">🧾</span>Billing</a>
+    <a class="nav-item" data-page="customers"><span class="nav-ic">👤</span>Customers</a>
+    <div class="nav-section" id="adminSection">Admin</div>
+    <a class="nav-item" data-page="users" id="usersNav"><span class="nav-ic">👥</span>Users</a>
+  </nav>
+  <div class="sb-user">
+    <div class="sb-user-row">
+      <div class="sb-avatar" id="sbAvatar">A</div>
+      <div><div class="sb-uname" id="sbName">Admin</div><div class="sb-urole" id="sbRole">admin</div></div>
+      <button class="sb-logout" onclick="doLogout()">Logout</button>
+    </div>
+  </div>
+</aside>
+
+<!-- ═══════════════ MAIN ═══════════════ -->
+<main class="main" id="mainApp" style="display:none">
+  <header class="topbar">
+    <div class="tb-l"><div class="pg-title" id="pgTitle">Dashboard</div><div class="crumb" id="crumb">Overview</div></div>
+    <div class="tb-r"><div class="tb-time" id="clock"></div></div>
+  </header>
+
+  <!-- DASHBOARD -->
+  <section class="page active" id="page-dashboard">
+    <div class="stat-grid" style="grid-template-columns:repeat(4,1fr)">
+      <div class="stat-card sc-blue"><div class="stat-lbl">Medicines</div><div class="stat-val" id="s-med">—</div><div class="stat-ico">💊</div></div>
+      <div class="stat-card sc-green"><div class="stat-lbl">Customers</div><div class="stat-val" id="s-cust">—</div><div class="stat-ico">👤</div></div>
+      <div class="stat-card sc-amber"><div class="stat-lbl">Revenue</div><div class="stat-val" id="s-rev">—</div><div class="stat-ico">₹</div></div>
+      <div class="stat-card sc-purple"><div class="stat-lbl">Bills</div><div class="stat-val" id="s-bill">—</div><div class="stat-ico">🧾</div></div>
+    </div>
+    <div class="stat-grid" style="grid-template-columns:repeat(4,1fr);margin-bottom:18px">
+      <div class="stat-card sc-red"><div class="stat-lbl">Out of Stock</div><div class="stat-val" id="s-oos">—</div><div class="stat-ico">⚠</div></div>
+      <div class="stat-card sc-amber"><div class="stat-lbl">Low Stock</div><div class="stat-val" id="s-low">—</div><div class="stat-ico">📉</div></div>
+      <div class="stat-card sc-cyan"><div class="stat-lbl">Suppliers</div><div class="stat-val" id="s-sup">—</div><div class="stat-ico">🏭</div></div>
+      <div class="stat-card sc-purple"><div class="stat-lbl">Users</div><div class="stat-val" id="s-usr">—</div><div class="stat-ico">👥</div></div>
+    </div>
+    <div class="panels">
+      <div class="panel"><div class="ph"><span class="pt">Recent Medicines</span><span class="pl" data-page="medicines">View All →</span></div><div class="pb" id="d-meds"><div class="empty">Loading…</div></div></div>
+      <div class="panel"><div class="ph"><span class="pt">Recent Bills</span><span class="pl" data-page="billing">View All →</span></div><div class="pb" id="d-bills"><div class="empty">Loading…</div></div></div>
+    </div>
+  </section>
+
+  <!-- MEDICINES -->
+  <section class="page" id="page-medicines">
+    <div class="toolbar">
+      <div class="sw-w"><span>🔍</span><input class="si" type="text" id="medSearch" placeholder="Search medicines…"/></div>
+      <button class="btn btn-p" onclick="openMedModal()">+ Add Medicine</button>
+    </div>
+    <div class="tc"><table class="dt"><thead><tr><th>#</th><th>Name</th><th>Category</th><th>Price</th><th>Stock</th><th>Expiry</th><th>Supplier</th><th>Actions</th></tr></thead><tbody id="medBody"><tr><td colspan="8" class="empty">Loading…</td></tr></tbody></table></div>
+  </section>
+
+  <!-- STOCK -->
+  <section class="page" id="page-stock">
+    <div class="tabs" id="stockTabs">
+      <div class="tab active" onclick="switchStockTab('alerts')">⚠ Alerts</div>
+      <div class="tab" onclick="switchStockTab('history')">📋 History</div>
+    </div>
+    <div id="stockAlerts">
+      <div id="alertsList"><div class="empty">Loading…</div></div>
+    </div>
+    <div id="stockHistory" style="display:none">
+      <div class="tc"><table class="dt"><thead><tr><th>Date</th><th>Medicine</th><th>Type</th><th>Qty</th><th>Supplier</th><th>Notes</th></tr></thead><tbody id="txBody"><tr><td colspan="6" class="empty">Loading…</td></tr></tbody></table></div>
+    </div>
+  </section>
+
+  <!-- SUPPLIERS -->
+  <section class="page" id="page-suppliers">
+    <div class="toolbar">
+      <div class="sw-w"><span>🔍</span><input class="si" type="text" id="supSearch" placeholder="Search suppliers…"/></div>
+      <button class="btn btn-p" onclick="openSupModal()">+ Add Supplier</button>
+    </div>
+    <div class="tc"><table class="dt"><thead><tr><th>#</th><th>Name</th><th>Contact Person</th><th>Phone</th><th>Email</th><th>Address</th><th>Actions</th></tr></thead><tbody id="supBody"><tr><td colspan="7" class="empty">Loading…</td></tr></tbody></table></div>
+  </section>
+
+  <!-- BILLING -->
+  <section class="page" id="page-billing">
+    <div class="toolbar"><div style="flex:1"></div><button class="btn btn-p" onclick="openBillModal()">+ New Bill</button></div>
+    <div class="tc"><table class="dt"><thead><tr><th>Bill ID</th><th>Customer</th><th>Items</th><th>Discount</th><th>Total</th><th>Date</th><th>Actions</th></tr></thead><tbody id="billBody"><tr><td colspan="7" class="empty">Loading…</td></tr></tbody></table></div>
+  </section>
+
+  <!-- CUSTOMERS -->
+  <section class="page" id="page-customers">
+    <div class="toolbar">
+      <div class="sw-w"><span>🔍</span><input class="si" type="text" id="custSearch" placeholder="Filter customers…"/></div>
+      <button class="btn btn-p" onclick="openCustModal()">+ Add Customer</button>
+    </div>
+    <div class="tc"><table class="dt"><thead><tr><th>#</th><th>Name</th><th>Phone</th><th>Email</th><th>Address</th><th>Registered</th><th>Actions</th></tr></thead><tbody id="custBody"><tr><td colspan="7" class="empty">Loading…</td></tr></tbody></table></div>
+  </section>
+
+  <!-- USERS (admin only) -->
+  <section class="page" id="page-users">
+    <div class="toolbar"><div style="flex:1"></div><button class="btn btn-p" onclick="openUserModal()">+ Add User</button></div>
+    <div class="tc"><table class="dt"><thead><tr><th>#</th><th>Username</th><th>Full Name</th><th>Role</th><th>Email</th><th>Created</th><th>Actions</th></tr></thead><tbody id="userBody"><tr><td colspan="7" class="empty">Loading…</td></tr></tbody></table></div>
+  </section>
+</main>
+
+<!-- MEDICINE MODAL -->
+<div class="mo" id="moMed">
+  <div class="md">
+    <div class="mh"><span id="medMT">Add Medicine</span><button class="mc" onclick="closeMo('moMed')">✕</button></div>
+    <div class="mb">
+      <input type="hidden" id="medId"/>
+      <div class="fr"><div class="fg"><label>Name *</label><input type="text" id="medName" placeholder="Paracetamol 500mg"/></div><div class="fg"><label>Category</label><input type="text" id="medCat" placeholder="Analgesic"/></div></div>
+      <div class="fr"><div class="fg"><label>Price (₹) *</label><input type="number" id="medPrice" step="0.01" min="0" placeholder="0.00"/></div><div class="fg"><label>Stock (units)</label><input type="number" id="medStock" min="0" placeholder="0"/></div></div>
+      <div class="fr"><div class="fg"><label>Expiry Date</label><input type="date" id="medExpiry"/></div><div class="fg"><label>Manufacturer</label><input type="text" id="medMfr" placeholder="Sun Pharma"/></div></div>
+      <div class="fg"><label>Supplier</label><select id="medSup"><option value="">— Select Supplier —</option></select></div>
+    </div>
+    <div class="mf"><button class="btn btn-g" onclick="closeMo('moMed')">Cancel</button><button class="btn btn-p" onclick="saveMed()">Save</button></div>
+  </div>
+</div>
+
+<!-- RESTOCK MODAL -->
+<div class="mo" id="moRestock">
+  <div class="md">
+    <div class="mh"><span id="restockTitle">Restock Medicine</span><button class="mc" onclick="closeMo('moRestock')">✕</button></div>
+    <div class="mb">
+      <input type="hidden" id="restockMedId"/>
+      <div class="fg"><label>Medicine</label><input type="text" id="restockMedName" readonly style="background:var(--bg3);color:var(--tm)"/></div>
+      <div class="fr"><div class="fg"><label>Add Quantity *</label><input type="number" id="restockQty" min="1" placeholder="e.g. 100"/></div><div class="fg"><label>Supplier</label><select id="restockSup"><option value="">— Select Supplier —</option></select></div></div>
+      <div class="fg"><label>Notes</label><input type="text" id="restockNotes" placeholder="e.g. New batch received"/></div>
+    </div>
+    <div class="mf"><button class="btn btn-g" onclick="closeMo('moRestock')">Cancel</button><button class="btn btn-gr" onclick="doRestock()">+ Add Stock</button></div>
+  </div>
+</div>
+
+<!-- SUPPLIER MODAL -->
+<div class="mo" id="moSup">
+  <div class="md">
+    <div class="mh"><span id="supMT">Add Supplier</span><button class="mc" onclick="closeMo('moSup')">✕</button></div>
+    <div class="mb">
+      <input type="hidden" id="supId"/>
+      <div class="fr"><div class="fg"><label>Company Name *</label><input type="text" id="supName" placeholder="Sun Pharma Distributors"/></div><div class="fg"><label>Contact Person</label><input type="text" id="supContact" placeholder="Raj Kumar"/></div></div>
+      <div class="fr"><div class="fg"><label>Phone</label><input type="tel" id="supPhone" placeholder="9876543210"/></div><div class="fg"><label>Email</label><input type="email" id="supEmail" placeholder="contact@supplier.com"/></div></div>
+      <div class="fg"><label>Address</label><textarea id="supAddr" rows="2" placeholder="Full address"></textarea></div>
+    </div>
+    <div class="mf"><button class="btn btn-g" onclick="closeMo('moSup')">Cancel</button><button class="btn btn-p" onclick="saveSup()">Save</button></div>
+  </div>
+</div>
+
+<!-- BILLING MODAL -->
+<div class="mo" id="moBill">
+  <div class="md md-lg">
+    <div class="mh"><span>New Bill</span><button class="mc" onclick="closeMo('moBill')">✕</button></div>
+    <div class="mb">
+      <div class="fg"><label>Customer *</label><select id="bCust"><option value="">— Select Customer —</option></select></div>
+      <!-- Add medicine to cart -->
+      <div class="cart-box">
+        <div class="cart-header">Add Medicines to Bill</div>
+        <div class="cart-row">
+          <div class="fg" style="flex:2;margin:0"><select id="bMed"><option value="">— Select Medicine —</option></select></div>
+          <div class="fg" style="width:80px;margin:0"><input type="number" id="bQty" min="1" value="1" placeholder="Qty"/></div>
+          <button class="btn btn-p" style="flex-shrink:0" onclick="addToCart()">+ Add</button>
+        </div>
+        <div class="cart-items-list" id="cartList"><div style="text-align:center;color:var(--td);font-size:12px;padding:10px">No items yet</div></div>
+        <div class="cart-total"><span class="cart-total-lbl">Subtotal</span><span class="cart-total-val" id="cartSubtotal">₹0.00</span></div>
+      </div>
+      <div class="fr">
+        <div class="fg"><label>Discount (₹)</label><input type="number" id="bDiscount" min="0" value="0" placeholder="0.00" oninput="updateCartTotal()"/></div>
+        <div class="fg"><label>Final Total</label><input type="text" id="bTotal" readonly style="font-weight:700;color:var(--green);background:var(--bg3)"/></div>
+      </div>
+      <div class="fg"><label>Notes / Prescription</label><textarea id="bNotes" rows="2" placeholder="Optional…"></textarea></div>
+    </div>
+    <div class="mf"><button class="btn btn-g" onclick="closeMo('moBill')">Cancel</button><button class="btn btn-p" onclick="saveBill()">Generate Bill</button></div>
+  </div>
+</div>
+
+<!-- CUSTOMER MODAL -->
+<div class="mo" id="moCust">
+  <div class="md">
+    <div class="mh"><span id="custMT">Add Customer</span><button class="mc" onclick="closeMo('moCust')">✕</button></div>
+    <div class="mb">
+      <input type="hidden" id="custId"/>
+      <div class="fr"><div class="fg"><label>Full Name *</label><input type="text" id="cName" placeholder="John Doe"/></div><div class="fg"><label>Phone</label><input type="tel" id="cPhone" placeholder="9876543210"/></div></div>
+      <div class="fg"><label>Email</label><input type="email" id="cEmail" placeholder="john@example.com"/></div>
+      <div class="fg"><label>Address</label><textarea id="cAddr" rows="2" placeholder="Street, City, PIN"></textarea></div>
+    </div>
+    <div class="mf"><button class="btn btn-g" onclick="closeMo('moCust')">Cancel</button><button class="btn btn-p" onclick="saveCust()">Save</button></div>
+  </div>
+</div>
+
+<!-- USER MODAL -->
+<div class="mo" id="moUser">
+  <div class="md">
+    <div class="mh"><span id="userMT">Add User</span><button class="mc" onclick="closeMo('moUser')">✕</button></div>
+    <div class="mb">
+      <input type="hidden" id="userId"/>
+      <div class="fr"><div class="fg"><label>Full Name</label><input type="text" id="uName" placeholder="John Doe"/></div><div class="fg"><label>Username *</label><input type="text" id="uUsername" placeholder="johndoe"/></div></div>
+      <div class="fr"><div class="fg"><label>Password <span id="uPwHint" style="color:var(--td);font-size:9px">(leave blank to keep)</span></label><input type="password" id="uPw" placeholder="••••••••"/></div><div class="fg"><label>Role</label><select id="uRole"><option value="staff">Staff</option><option value="admin">Admin</option></select></div></div>
+      <div class="fg"><label>Email</label><input type="email" id="uEmail" placeholder="user@pharmacy.com"/></div>
+    </div>
+    <div class="mf"><button class="btn btn-g" onclick="closeMo('moUser')">Cancel</button><button class="btn btn-p" onclick="saveUser()">Save</button></div>
+  </div>
+</div>
+
+<!-- INVOICE VIEW -->
+<div id="invoiceView">
+  <div class="inv-print-bar">
+    <button class="inv-print-btn" style="background:#4f8ef7;color:#fff" onclick="window.print()">🖨 Print Invoice</button>
+    <button class="inv-print-btn" style="background:rgba(255,255,255,.1);color:#fff" onclick="closeInvoice()">✕ Close</button>
+  </div>
+  <div class="inv-wrap" id="invContent"></div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+'use strict';
+/* ── State ── */
+let ME=null, allMeds=[], allCusts=[], allSups=[], cartItems=[];
+
+/* ── API ── */
+async function api(url,opts={}){
+  const r=await fetch(url,{headers:{'Content-Type':'application/json'},...opts});
+  const d=await r.json();
+  if(!r.ok) throw new Error(d.error||'Request failed');
+  return d;
+}
+
+/* ── Helpers ── */
+function esc(s){return s==null?'':String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function skCls(s){return s<=0?'sk-out':s<=10?'sk-lo':'sk-ok';}
+function fmtDate(s){if(!s)return'—';try{return new Date(s).toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'});}catch{return s;}}
+function fmtMoney(n){return'₹'+Number(n||0).toLocaleString('en-IN',{minimumFractionDigits:2,maximumFractionDigits:2});}
+function toast(msg,type='ok'){const t=document.getElementById('toast');t.textContent=msg;t.className=`toast show ${type}`;setTimeout(()=>t.classList.remove('show'),3200);}
+function openMo(id){document.getElementById(id)?.classList.add('open');}
+function closeMo(id){document.getElementById(id)?.classList.remove('open');}
+
+/* ── Clock ── */
+setInterval(()=>document.getElementById('clock').textContent=new Date().toLocaleTimeString('en-IN',{hour12:false}),1000);
+
+/* ══════════════════════════════════════
+   MODULE 1 — AUTH / LOGIN
+══════════════════════════════════════ */
+async function checkLogin(){
+  try{
+    ME=await api('/api/me');
+    showApp();
+  }catch{
+    document.getElementById('loginScreen').style.display='flex';
+  }
+}
+
+async function doLogin(){
+  const user=document.getElementById('lUser').value.trim();
+  const pass=document.getElementById('lPass').value;
+  const errEl=document.getElementById('lErr');
+  errEl.textContent=''; errEl.style.display='none';
+  const btn=document.getElementById('lBtn');
+  btn.innerHTML='Signing in…'; btn.disabled=true;
+  try{
+    ME=await api('/api/login',{method:'POST',body:JSON.stringify({username:user,password:pass})});
+    document.getElementById('loginScreen').style.display='none';
+    showApp();
+  }catch(e){
+    errEl.textContent='⚠ '+e.message; errEl.style.display='block';
+  }finally{
+    btn.innerHTML='Sign In <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+    btn.disabled=false;
+  }
+}
+
+async function doLogout(){
+  await api('/api/logout',{method:'POST'});
+  ME=null; location.reload();
+}
+
+document.getElementById('lPass').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin();});
+
+function showApp(){
+  document.getElementById('loginScreen').style.display='none';
+  document.getElementById('mainApp').style.display='flex';
+  // Update sidebar user info
+  document.getElementById('sbName').textContent=ME.full_name||ME.username;
+  document.getElementById('sbRole').textContent=ME.role;
+  document.getElementById('sbAvatar').textContent=(ME.full_name||ME.username)[0].toUpperCase();
+  // Hide Users nav if not admin
+  const showAdmin=ME.role==='admin';
+  document.getElementById('usersNav').style.display=showAdmin?'flex':'none';
+  document.getElementById('adminSection').style.display=showAdmin?'block':'none';
+  nav('dashboard');
+}
+
+/* ══════════════════════════════════════
+   NAVIGATION
+══════════════════════════════════════ */
+const META={
+  dashboard:{title:'Dashboard',crumb:'Overview'},
+  medicines:{title:'Medicines',crumb:'Inventory Management'},
+  stock:    {title:'Stock Management',crumb:'Alerts & Restock History'},
+  suppliers:{title:'Suppliers',crumb:'Supplier Directory'},
+  billing:  {title:'Billing',crumb:'Sales & Invoices'},
+  customers:{title:'Customers',crumb:'Customer Records'},
+  users:    {title:'User Management',crumb:'Admin — Accounts & Roles'},
+};
+
+function nav(page){
+  if(page==='users'&&ME?.role!=='admin'){toast('Admin access required','err');return;}
+  document.querySelectorAll('.nav-item').forEach(e=>e.classList.remove('active'));
+  document.querySelector(`.nav-item[data-page="${page}"]`)?.classList.add('active');
+  document.querySelectorAll('.page').forEach(e=>e.classList.remove('active'));
+  document.getElementById(`page-${page}`)?.classList.add('active');
+  const m=META[page]||{};
+  document.getElementById('pgTitle').textContent=m.title||page;
+  document.getElementById('crumb').textContent=m.crumb||'';
+  const loaders={dashboard:loadDash,medicines:loadMeds,stock:loadStock,
+    suppliers:loadSups,billing:loadBills,customers:loadCusts,users:loadUsers};
+  loaders[page]?.();
+}
+document.querySelectorAll('[data-page]').forEach(el=>el.addEventListener('click',()=>nav(el.dataset.page)));
+
+/* ══════════════════════════════════════
+   DASHBOARD
+══════════════════════════════════════ */
+async function loadDash(){
+  try{
+    const [stats,meds,bills]=await Promise.all([api('/api/dashboard'),api('/api/medicines'),api('/api/bills')]);
+    document.getElementById('s-med').textContent=stats.total_medicines;
+    document.getElementById('s-cust').textContent=stats.total_customers;
+    document.getElementById('s-rev').textContent=fmtMoney(stats.total_revenue);
+    document.getElementById('s-bill').textContent=stats.total_bills;
+    document.getElementById('s-oos').textContent=stats.out_of_stock;
+    document.getElementById('s-low').textContent=stats.low_stock;
+    document.getElementById('s-sup').textContent=stats.total_suppliers;
+    document.getElementById('s-usr').textContent=stats.total_users;
+    // Low stock badge
+    const lb=document.getElementById('lowBadge');
+    const lo=stats.out_of_stock+stats.low_stock;
+    lb.style.display=lo>0?'inline':'none'; lb.textContent=lo;
+
+    const dm=document.getElementById('d-meds');
+    dm.innerHTML=meds.length?meds.slice(0,7).map(m=>`
+      <div class="pr">
+        <div><div class="pr-nm">${esc(m.name)}</div><div class="pr-mt">${esc(m.category||'')}</div></div>
+        <span class="badge bb">${fmtMoney(m.price)}</span>
+        <span class="sk ${skCls(m.stock)}" style="font-size:10px">${m.stock}</span>
+      </div>`).join(''):'<div class="empty">No medicines yet</div>';
+
+    const db=document.getElementById('d-bills');
+    db.innerHTML=bills.length?bills.slice(0,7).map(b=>`
+      <div class="pr">
+        <div><div class="pr-nm">${esc(b.customer_name)}</div><div class="pr-mt">${fmtDate(b.bill_date)}</div></div>
+        <span class="badge bg">${fmtMoney(b.total_amount)}</span>
+      </div>`).join(''):'<div class="empty">No bills yet</div>';
+  }catch{toast('Dashboard load failed','err');}
+}
+
+/* ══════════════════════════════════════
+   MODULE 2 — MEDICINES
+══════════════════════════════════════ */
+async function loadMeds(search=''){
+  try{
+    const url=search?`/api/medicines?search=${encodeURIComponent(search)}`:'/api/medicines';
+    allMeds=await api(url); renderMeds(allMeds);
+  }catch{toast('Failed to load medicines','err');}
+}
+function renderMeds(meds){
+  document.getElementById('medBody').innerHTML=meds.length?meds.map((m,i)=>`
+    <tr>
+      <td class="mono" style="color:var(--tm)">${i+1}</td>
+      <td><strong>${esc(m.name)}</strong></td>
+      <td>${esc(m.category||'—')}</td>
+      <td class="mono">${fmtMoney(m.price)}</td>
+      <td><span class="sk ${skCls(m.stock)}">${m.stock}</span></td>
+      <td>${m.expiry_date?esc(m.expiry_date):'<span style="color:var(--td)">—</span>'}</td>
+      <td>${esc(m.supplier_name||'—')}</td>
+      <td style="display:flex;gap:6px">
+        <button class="btn btn-sm btn-e" onclick="openEditMed(${m.id})">✏</button>
+        <button class="btn btn-sm btn-d" onclick="delMed(${m.id},'${esc(m.name)}')">🗑</button>
+      </td>
+    </tr>`).join(''):'<tr><td colspan="8" class="empty">No medicines found.</td></tr>';
+}
+async function openMedModal(){
+  await loadSupsIntoSelect('medSup');
+  document.getElementById('medMT').textContent='Add Medicine';
+  ['medId','medName','medCat','medPrice','medStock','medExpiry','medMfr'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('medSup').value='';
+  openMo('moMed');
+}
+async function openEditMed(id){
+  await loadSupsIntoSelect('medSup');
+  const m=allMeds.find(x=>x.id===id); if(!m)return;
+  document.getElementById('medMT').textContent='Edit Medicine';
+  document.getElementById('medId').value=m.id;
+  document.getElementById('medName').value=m.name;
+  document.getElementById('medCat').value=m.category||'';
+  document.getElementById('medPrice').value=m.price;
+  document.getElementById('medStock').value=m.stock;
+  document.getElementById('medExpiry').value=m.expiry_date||'';
+  document.getElementById('medMfr').value=m.manufacturer||'';
+  document.getElementById('medSup').value=m.supplier_id||'';
+  openMo('moMed');
+}
+async function saveMed(){
+  const id=document.getElementById('medId').value;
+  const name=document.getElementById('medName').value.trim();
+  if(!name){toast('Name required','err');return;}
+  const body={name,category:document.getElementById('medCat').value.trim(),
+    price:parseFloat(document.getElementById('medPrice').value)||0,
+    stock:parseInt(document.getElementById('medStock').value)||0,
+    expiry_date:document.getElementById('medExpiry').value||null,
+    manufacturer:document.getElementById('medMfr').value.trim(),
+    supplier_id:document.getElementById('medSup').value||null};
+  try{
+    if(id) await api(`/api/medicines/${id}`,{method:'PUT',body:JSON.stringify(body)});
+    else   await api('/api/medicines',{method:'POST',body:JSON.stringify(body)});
+    toast(id?'Medicine updated':'Medicine added');
+    closeMo('moMed'); loadMeds(document.getElementById('medSearch').value);
+  }catch(e){toast(e.message,'err');}
+}
+async function delMed(id,name){
+  if(!confirm(`Delete "${name}"?`))return;
+  try{await api(`/api/medicines/${id}`,{method:'DELETE'});toast(`"${name}" deleted`);loadMeds();}
+  catch(e){toast(e.message,'err');}
+}
+let mst;
+document.getElementById('medSearch').addEventListener('input',e=>{clearTimeout(mst);mst=setTimeout(()=>loadMeds(e.target.value),250);});
+
+/* ══════════════════════════════════════
+   MODULE 3 — STOCK MANAGEMENT
+══════════════════════════════════════ */
+let stockTab='alerts';
+function switchStockTab(t){
+  stockTab=t;
+  document.querySelectorAll('#stockTabs .tab').forEach((el,i)=>{
+    el.classList.toggle('active',(i===0&&t==='alerts')||(i===1&&t==='history'));
+  });
+  document.getElementById('stockAlerts').style.display=t==='alerts'?'block':'none';
+  document.getElementById('stockHistory').style.display=t==='history'?'block':'none';
+  if(t==='history')loadTx();
+}
+async function loadStock(){
+  switchStockTab('alerts');
+  try{
+    const low=await api('/api/stock/low');
+    const el=document.getElementById('alertsList');
+    if(!low.length){el.innerHTML='<div class="empty" style="color:var(--green)">✅ All medicines are well stocked!</div>';return;}
+    el.innerHTML=low.map(m=>`
+      <div class="alert-row ${m.stock===0?'':'warn'}">
+        <div>
+          <div style="font-weight:600;font-size:13px">${esc(m.name)}</div>
+          <div style="font-size:11px;color:var(--tm)">${esc(m.category||'')} &nbsp;|&nbsp; Supplier: ${esc(m.supplier_name||'—')}</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px">
+          <span class="sk ${skCls(m.stock)}">${m.stock===0?'Out of stock':m.stock+' left'}</span>
+          <button class="btn btn-sm btn-gr" onclick="openRestockModal(${m.id},'${esc(m.name)}')">+ Restock</button>
+        </div>
+      </div>`).join('');
+  }catch{toast('Failed to load stock alerts','err');}
+}
+async function loadTx(){
+  try{
+    const rows=await api('/api/stock/transactions');
+    document.getElementById('txBody').innerHTML=rows.length?rows.map(r=>`
+      <tr>
+        <td style="color:var(--tm)">${fmtDate(r.created_at)}</td>
+        <td><strong>${esc(r.medicine_name)}</strong></td>
+        <td><span class="badge ${r.type==='restock'?'bg':r.type==='sale'?'bb':'ba'}">${r.type}</span></td>
+        <td class="mono" style="color:${r.type==='sale'?'var(--red)':'var(--green)'}">${r.type==='sale'?'-':'+'} ${r.quantity}</td>
+        <td>${esc(r.supplier_name||'—')}</td>
+        <td style="color:var(--tm)">${esc(r.notes||'—')}</td>
+      </tr>`).join(''):'<tr><td colspan="6" class="empty">No transactions yet</td></tr>';
+  }catch{toast('Failed to load history','err');}
+}
+async function openRestockModal(id,name){
+  await loadSupsIntoSelect('restockSup');
+  document.getElementById('restockMedId').value=id;
+  document.getElementById('restockMedName').value=name;
+  document.getElementById('restockQty').value='';
+  document.getElementById('restockNotes').value='';
+  document.getElementById('restockSup').value='';
+  openMo('moRestock');
+}
+async function doRestock(){
+  const qty=parseInt(document.getElementById('restockQty').value);
+  if(!qty||qty<1){toast('Enter a valid quantity','err');return;}
+  try{
+    const res=await api('/api/stock/restock',{method:'POST',body:JSON.stringify({
+      medicine_id:document.getElementById('restockMedId').value,
+      quantity:qty,
+      supplier_id:document.getElementById('restockSup').value||null,
+      notes:document.getElementById('restockNotes').value
+    })});
+    toast(res.message); closeMo('moRestock'); loadStock();
+  }catch(e){toast(e.message,'err');}
+}
+
+/* ══════════════════════════════════════
+   MODULE 4 — SUPPLIERS
+══════════════════════════════════════ */
+async function loadSups(){
+  try{allSups=await api('/api/suppliers');renderSups(allSups);}
+  catch{toast('Failed to load suppliers','err');}
+}
+function renderSups(sups){
+  document.getElementById('supBody').innerHTML=sups.length?sups.map((s,i)=>`
+    <tr>
+      <td class="mono" style="color:var(--tm)">${i+1}</td>
+      <td><strong>${esc(s.name)}</strong></td>
+      <td>${esc(s.contact_person||'—')}</td>
+      <td class="mono">${esc(s.phone||'—')}</td>
+      <td>${esc(s.email||'—')}</td>
+      <td style="max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(s.address||'—')}</td>
+      <td style="display:flex;gap:6px">
+        <button class="btn btn-sm btn-e" onclick="openEditSup(${s.id})">✏</button>
+        <button class="btn btn-sm btn-d" onclick="delSup(${s.id},'${esc(s.name)}')">🗑</button>
+      </td>
+    </tr>`).join(''):'<tr><td colspan="7" class="empty">No suppliers yet.</td></tr>';
+}
+function openSupModal(){
+  document.getElementById('supMT').textContent='Add Supplier';
+  ['supId','supName','supContact','supPhone','supEmail','supAddr'].forEach(id=>document.getElementById(id).value='');
+  openMo('moSup');
+}
+function openEditSup(id){
+  const s=allSups.find(x=>x.id===id); if(!s)return;
+  document.getElementById('supMT').textContent='Edit Supplier';
+  document.getElementById('supId').value=s.id;
+  document.getElementById('supName').value=s.name;
+  document.getElementById('supContact').value=s.contact_person||'';
+  document.getElementById('supPhone').value=s.phone||'';
+  document.getElementById('supEmail').value=s.email||'';
+  document.getElementById('supAddr').value=s.address||'';
+  openMo('moSup');
+}
+async function saveSup(){
+  const id=document.getElementById('supId').value;
+  const name=document.getElementById('supName').value.trim();
+  if(!name){toast('Supplier name required','err');return;}
+  const body={name,contact_person:document.getElementById('supContact').value.trim(),
+    phone:document.getElementById('supPhone').value.trim(),
+    email:document.getElementById('supEmail').value.trim(),
+    address:document.getElementById('supAddr').value.trim()};
+  try{
+    if(id) await api(`/api/suppliers/${id}`,{method:'PUT',body:JSON.stringify(body)});
+    else   await api('/api/suppliers',{method:'POST',body:JSON.stringify(body)});
+    toast(id?'Supplier updated':'Supplier added'); closeMo('moSup'); loadSups();
+  }catch(e){toast(e.message,'err');}
+}
+async function delSup(id,name){
+  if(!confirm(`Delete "${name}"?`))return;
+  try{await api(`/api/suppliers/${id}`,{method:'DELETE'});toast(`"${name}" deleted`);loadSups();}
+  catch(e){toast(e.message,'err');}
+}
+document.getElementById('supSearch').addEventListener('input',e=>{
+  const q=e.target.value.toLowerCase();
+  renderSups(allSups.filter(s=>s.name.toLowerCase().includes(q)||(s.contact_person||'').toLowerCase().includes(q)));
+});
+async function loadSupsIntoSelect(selId){
+  if(!allSups.length) allSups=await api('/api/suppliers');
+  const sel=document.getElementById(selId);
+  const cur=sel.value;
+  sel.innerHTML='<option value="">— None —</option>';
+  allSups.forEach(s=>{const o=document.createElement('option');o.value=s.id;o.textContent=s.name;sel.appendChild(o);});
+  sel.value=cur;
+}
+
+/* ══════════════════════════════════════
+   MODULE 5 — BILLING
+══════════════════════════════════════ */
+async function loadBills(){
+  try{
+    const bills=await api('/api/bills');
+    document.getElementById('billBody').innerHTML=bills.length?bills.map(b=>`
+      <tr>
+        <td class="mono" style="color:var(--tm)">#${String(b.id).padStart(4,'0')}</td>
+        <td><strong>${esc(b.customer_name)}</strong></td>
+        <td class="mono" style="color:var(--tm)">${b.item_count||'—'}</td>
+        <td class="mono">${b.discount>0?fmtMoney(b.discount):'—'}</td>
+        <td class="mono" style="color:var(--green)">${fmtMoney(b.total_amount)}</td>
+        <td style="color:var(--tm)">${fmtDate(b.bill_date)}</td>
+        <td><button class="btn btn-sm btn-e" onclick="viewInvoice(${b.id})">🖨 Invoice</button></td>
+      </tr>`).join(''):'<tr><td colspan="7" class="empty">No bills yet.</td></tr>';
+  }catch{toast('Failed to load bills','err');}
+}
+
+/* Bill Cart */
+cartItems=[];
+async function openBillModal(){
+  cartItems=[];
+  allCusts=await api('/api/customers');
+  allMeds=await api('/api/medicines');
+  // Populate customer dropdown
+  const cs=document.getElementById('bCust');
+  cs.innerHTML='<option value="">— Select Customer —</option>';
+  allCusts.forEach(c=>{const o=document.createElement('option');o.value=c.id;o.textContent=`${c.name} (${c.phone||'no phone'})`;cs.appendChild(o);});
+  // Populate medicine dropdown
+  const ms=document.getElementById('bMed');
+  ms.innerHTML='<option value="">— Select Medicine —</option>';
+  allMeds.forEach(m=>{const o=document.createElement('option');o.value=m.id;o.textContent=`${m.name} — ₹${Number(m.price).toFixed(2)} (stock: ${m.stock})`;o.dataset.price=m.price;o.dataset.stock=m.stock;ms.appendChild(o);});
+  document.getElementById('bDiscount').value='0';
+  document.getElementById('bNotes').value='';
+  renderCart();
+  openMo('moBill');
+}
+function addToCart(){
+  const sel=document.getElementById('bMed');
+  const opt=sel.options[sel.selectedIndex];
+  if(!opt.value){toast('Select a medicine','err');return;}
+  const qty=parseInt(document.getElementById('bQty').value)||1;
+  const stock=parseInt(opt.dataset.stock);
+  if(qty>stock){toast(`Only ${stock} units in stock`,'err');return;}
+  const existing=cartItems.find(i=>i.medicine_id===parseInt(opt.value));
+  if(existing){
+    if(existing.quantity+qty>stock){toast(`Only ${stock} units available`,'err');return;}
+    existing.quantity+=qty;
+    existing.subtotal=existing.quantity*existing.unit_price;
+  }else{
+    cartItems.push({medicine_id:parseInt(opt.value),medicine_name:opt.text.split('—')[0].trim(),
+      unit_price:parseFloat(opt.dataset.price),quantity:qty,subtotal:qty*parseFloat(opt.dataset.price)});
+  }
+  sel.value=''; document.getElementById('bQty').value='1';
+  renderCart();
+}
+function removeFromCart(idx){cartItems.splice(idx,1);renderCart();}
+function updateCartTotal(){
+  const sub=cartItems.reduce((a,i)=>a+i.subtotal,0);
+  const disc=parseFloat(document.getElementById('bDiscount').value)||0;
+  const total=Math.max(0,sub-disc);
+  document.getElementById('cartSubtotal').textContent=fmtMoney(sub);
+  document.getElementById('bTotal').value=fmtMoney(total);
+}
+function renderCart(){
+  const el=document.getElementById('cartList');
+  el.innerHTML=cartItems.length?cartItems.map((item,i)=>`
+    <div class="cart-item">
+      <div class="cart-item-name">${esc(item.medicine_name)}</div>
+      <div style="font-family:var(--fm);color:var(--tm);font-size:11px">${item.quantity} × ${fmtMoney(item.unit_price)}</div>
+      <div class="cart-item-price">${fmtMoney(item.subtotal)}</div>
+      <span class="cart-item-rm" onclick="removeFromCart(${i})">✕</span>
+    </div>`).join(''):'<div style="text-align:center;color:var(--td);font-size:12px;padding:10px">No items yet</div>';
+  updateCartTotal();
+}
+async function saveBill(){
+  if(!document.getElementById('bCust').value){toast('Select a customer','err');return;}
+  if(!cartItems.length){toast('Add at least one medicine','err');return;}
+  const body={
+    customer_id:parseInt(document.getElementById('bCust').value),
+    items:cartItems.map(i=>({medicine_id:i.medicine_id,quantity:i.quantity,unit_price:i.unit_price})),
+    discount:parseFloat(document.getElementById('bDiscount').value)||0,
+    notes:document.getElementById('bNotes').value.trim()
+  };
+  try{
+    const res=await api('/api/bills',{method:'POST',body:JSON.stringify(body)});
+    toast(`Bill #${String(res.id).padStart(4,'0')} generated! Total: ${fmtMoney(res.total)}`);
+    closeMo('moBill'); cartItems=[]; loadBills();
+  }catch(e){toast(e.message,'err');}
+}
+
+async function viewInvoice(bid){
+  try{
+    const bill=await api(`/api/bills/${bid}`);
+    const subtotal=bill.items.reduce((a,i)=>a+parseFloat(i.subtotal),0);
+    document.getElementById('invContent').innerHTML=`
+      <div class="inv-head">
+        <div><div class="inv-brand">⚕ RxCore Pharmacy</div><div class="inv-sub">Professional Pharmacy Management</div></div>
+        <div class="inv-num">
+          <strong>#${String(bill.id).padStart(4,'0')}</strong>
+          Date: ${fmtDate(bill.bill_date)}
+        </div>
+      </div>
+      <div class="inv-parties">
+        <div><div class="inv-party-lbl">Bill To</div><div class="inv-party-val"><strong>${esc(bill.customer_name)}</strong><br>${esc(bill.customer_phone||'')}<br>${esc(bill.customer_address||'')}</div></div>
+        <div><div class="inv-party-lbl">From</div><div class="inv-party-val"><strong>RxCore Pharmacy</strong><br>pharmacy@rxcore.com</div></div>
+      </div>
+      <table class="inv-table">
+        <thead><tr><th>#</th><th>Medicine</th><th>Category</th><th>Qty</th><th>Unit Price</th><th>Amount</th></tr></thead>
+        <tbody>${bill.items.map((item,i)=>`
+          <tr>
+            <td>${i+1}</td><td>${esc(item.medicine_name)}</td><td>${esc(item.category||'—')}</td>
+            <td>${item.quantity}</td><td>${fmtMoney(item.unit_price)}</td><td>${fmtMoney(item.subtotal)}</td>
+          </tr>`).join('')}
+        </tbody>
+      </table>
+      <div class="inv-totals">
+        <div>Subtotal: ${fmtMoney(subtotal)}</div>
+        ${bill.discount>0?`<div>Discount: - ${fmtMoney(bill.discount)}</div>`:''}
+        ${bill.notes?`<div style="color:#64748b;font-size:12px">Note: ${esc(bill.notes)}</div>`:''}
+        <div class="inv-grand">Total: ${fmtMoney(bill.total_amount)}</div>
+      </div>
+      <div class="inv-footer">Thank you for your visit! Get well soon. &nbsp;|&nbsp; RxCore Pharmacy Management System</div>`;
+    document.getElementById('invoiceView').style.display='block';
+  }catch(e){toast('Failed to load invoice','err');}
+}
+function closeInvoice(){document.getElementById('invoiceView').style.display='none';}
+
+/* ══════════════════════════════════════
+   MODULE 6 — CUSTOMERS
+══════════════════════════════════════ */
+async function loadCusts(){
+  try{allCusts=await api('/api/customers');renderCusts(allCusts);}
+  catch{toast('Failed to load customers','err');}
+}
+function renderCusts(custs){
+  document.getElementById('custBody').innerHTML=custs.length?custs.map((c,i)=>`
+    <tr>
+      <td class="mono" style="color:var(--tm)">${i+1}</td>
+      <td><strong>${esc(c.name)}</strong></td>
+      <td class="mono">${esc(c.phone||'—')}</td>
+      <td>${esc(c.email||'—')}</td>
+      <td style="max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(c.address||'—')}</td>
+      <td style="color:var(--tm)">${fmtDate(c.created_at)}</td>
+      <td style="display:flex;gap:6px">
+        <button class="btn btn-sm btn-e" onclick="openEditCust(${c.id})">✏</button>
+        <button class="btn btn-sm btn-d" onclick="delCust(${c.id},'${esc(c.name)}')">🗑</button>
+      </td>
+    </tr>`).join(''):'<tr><td colspan="7" class="empty">No customers found.</td></tr>';
+}
+function openCustModal(){
+  document.getElementById('custMT').textContent='Add Customer';
+  ['custId','cName','cPhone','cEmail','cAddr'].forEach(id=>document.getElementById(id).value='');
+  openMo('moCust');
+}
+function openEditCust(id){
+  const c=allCusts.find(x=>x.id===id); if(!c)return;
+  document.getElementById('custMT').textContent='Edit Customer';
+  document.getElementById('custId').value=c.id;
+  document.getElementById('cName').value=c.name;
+  document.getElementById('cPhone').value=c.phone||'';
+  document.getElementById('cEmail').value=c.email||'';
+  document.getElementById('cAddr').value=c.address||'';
+  openMo('moCust');
+}
+async function saveCust(){
+  const id=document.getElementById('custId').value;
+  const name=document.getElementById('cName').value.trim();
+  if(!name){toast('Name required','err');return;}
+  const body={name,phone:document.getElementById('cPhone').value.trim(),
+    email:document.getElementById('cEmail').value.trim(),address:document.getElementById('cAddr').value.trim()};
+  try{
+    if(id) await api(`/api/customers/${id}`,{method:'PUT',body:JSON.stringify(body)});
+    else   await api('/api/customers',{method:'POST',body:JSON.stringify(body)});
+    toast(id?'Customer updated':'Customer registered'); closeMo('moCust'); loadCusts();
+  }catch(e){toast(e.message,'err');}
+}
+async function delCust(id,name){
+  if(!confirm(`Delete "${name}"?`))return;
+  try{await api(`/api/customers/${id}`,{method:'DELETE'});toast(`"${name}" deleted`);loadCusts();}
+  catch(e){toast(e.message,'err');}
+}
+document.getElementById('custSearch').addEventListener('input',e=>{
+  const q=e.target.value.toLowerCase();
+  renderCusts(allCusts.filter(c=>c.name.toLowerCase().includes(q)||(c.phone||'').includes(q)||(c.email||'').toLowerCase().includes(q)));
+});
+
+/* ══════════════════════════════════════
+   MODULE 1 — USER MANAGEMENT
+══════════════════════════════════════ */
+let allUsers=[];
+async function loadUsers(){
+  try{allUsers=await api('/api/users');renderUsers(allUsers);}
+  catch(e){toast(e.message,'err');}
+}
+function renderUsers(users){
+  document.getElementById('userBody').innerHTML=users.length?users.map((u,i)=>`
+    <tr>
+      <td class="mono" style="color:var(--tm)">${i+1}</td>
+      <td class="mono">${esc(u.username)}</td>
+      <td>${esc(u.full_name||'—')}</td>
+      <td><span class="role-${u.role}">${u.role}</span></td>
+      <td>${esc(u.email||'—')}</td>
+      <td style="color:var(--tm)">${fmtDate(u.created_at)}</td>
+      <td style="display:flex;gap:6px">
+        <button class="btn btn-sm btn-e" onclick="openEditUser(${u.id})">✏</button>
+        ${u.id!==ME?.id?`<button class="btn btn-sm btn-d" onclick="delUser(${u.id},'${esc(u.username)}')">🗑</button>`:'<span style="color:var(--td);font-size:11px;padding:4px 8px">You</span>'}
+      </td>
+    </tr>`).join(''):'<tr><td colspan="7" class="empty">No users found.</td></tr>';
+}
+function openUserModal(){
+  document.getElementById('userMT').textContent='Add User';
+  document.getElementById('uPwHint').style.display='none';
+  ['userId','uName','uUsername','uPw','uEmail'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('uRole').value='staff';
+  openMo('moUser');
+}
+function openEditUser(id){
+  const u=allUsers.find(x=>x.id===id); if(!u)return;
+  document.getElementById('userMT').textContent='Edit User';
+  document.getElementById('uPwHint').style.display='inline';
+  document.getElementById('userId').value=u.id;
+  document.getElementById('uName').value=u.full_name||'';
+  document.getElementById('uUsername').value=u.username;
+  document.getElementById('uPw').value='';
+  document.getElementById('uRole').value=u.role;
+  document.getElementById('uEmail').value=u.email||'';
+  openMo('moUser');
+}
+async function saveUser(){
+  const id=document.getElementById('userId').value;
+  const username=document.getElementById('uUsername').value.trim();
+  const pw=document.getElementById('uPw').value;
+  if(!username){toast('Username required','err');return;}
+  if(!id&&!pw){toast('Password required for new user','err');return;}
+  const body={username,full_name:document.getElementById('uName').value.trim(),
+    role:document.getElementById('uRole').value,email:document.getElementById('uEmail').value.trim()};
+  if(pw) body.password=pw;
+  try{
+    if(id) await api(`/api/users/${id}`,{method:'PUT',body:JSON.stringify(body)});
+    else   await api('/api/users',{method:'POST',body:JSON.stringify(body)});
+    toast(id?'User updated':'User created'); closeMo('moUser'); loadUsers();
+  }catch(e){toast(e.message,'err');}
+}
+async function delUser(id,name){
+  if(!confirm(`Delete user "${name}"?`))return;
+  try{await api(`/api/users/${id}`,{method:'DELETE'});toast(`"${name}" deleted`);loadUsers();}
+  catch(e){toast(e.message,'err');}
+}
+
+/* ── Close modals on overlay click ── */
+document.querySelectorAll('.mo').forEach(mo=>mo.addEventListener('click',e=>{if(e.target===mo)closeMo(mo.id);}));
+
+/* ── Boot ── */
+checkLogin();
+</script>
+</body>
+</html>
